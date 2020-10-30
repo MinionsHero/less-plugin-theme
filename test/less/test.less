@@ -1,0 +1,27 @@
+@import "./variables";
+
+.link {
+  font-size: 12px;
+  color:theme({
+    white: #dddddd;
+    black: #ffffff;
+  });
+  border-color: theme(@borderColor);
+  white: 100%;
+  background-color: theme({
+    white: #dddddd;
+    black: #123456;
+  });
+  a {
+    .hello {
+      &.h {
+        .white &, .white& {
+          color: @color;
+        }
+      }
+    ;
+    }
+  }
+}
+
+
