@@ -1,20 +1,37 @@
-@import "./variables";
-
-// wo ai beijing tianan men /* dddd
-// **/
+@color: red;
+@borderColor: {
+  xl: #dddddd;
+  xxl: #ffffff
+};
 .link {
-  /**
-    // ddddd
-    这个是shemale？？
-   */
   font-size: 12px;
-  /// dd
-  color:theme({
+  /**
+     The following statement will be transfer
+    .white .link,
+    .white.link {
+      color: #dddddd;
+    }
+    .black .link,
+    .black.link {
+      color: #ffffff;
+    }
+   */
+  color: theme({
     white: #dddddd;
     black: #ffffff;
   });
+  /**
+     The following statement will be transfer
+    .xl .link,
+    .xl.link {
+      border-color: #dddddd;
+    }
+    .xxl .link,
+    .xxl.link {
+      border-color: #ffffff;
+    }
+   */
   border-color: theme(@borderColor);
-  white: 100%;
   background-color: theme({
     white: #dddddd;
     black: #123456;
