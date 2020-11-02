@@ -1,50 +1,51 @@
-@color: red;
-@borderColor: {
-  xl: #dddddd;
-  xxl: #ffffff
-};
-.link {
-  font-size: 12px;
-  /**
-     The following statement will be transfer
-    .white .link,
-    .white.link {
-      color: #dddddd;
+@import "./variables";
+
+.contract-item {
+  display: table-row;
+  vertical-align: middle;
+  color: theme(@color-font-regular);
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  * {
+    font-size: 12px;
+    line-height: 30px;
+  }
+
+  &:hover, &.active {
+    color: theme(@color-panel-item-active);
+    background-color: theme(@color-panel-item-bg-active);
+  }
+
+  > * {
+    display: table-cell;
+
+    &:nth-child(1) {
+      padding-left: 16px;
     }
-    .black .link,
-    .black.link {
-      color: #ffffff;
+
+    &:nth-child(2) {
+      text-align: right;
+      padding: 0 0 0 15px;
     }
-   */
-  color: theme({
-    white: #dddddd;
-    black: #ffffff;
-  });
-  /**
-     The following statement will be transfer
-    .xl .link,
-    .xl.link {
-      border-color: #dddddd;
+
+    &:nth-child(3) {
+      text-align: right;
+      padding: 0 31px 0 10px;
     }
-    .xxl .link,
-    .xxl.link {
-      border-color: #ffffff;
+  }
+
+  .favorite-icon {
+    font-size: inherit;
+    margin-right: 5px;
+
+    &.hyicon-star {
+      color: theme(@color-btn-bg-active);
     }
-   */
-  border-color: theme(@borderColor);
-  background-color: theme({
-    white: #dddddd;
-    black: #123456;
-  });
-  a {
-    .hello {
-      &.h {
-        .white &, .white& {
-          color: @color;
-        }
-      }
+
+    &.hyicon-star-not {
+      color: theme(@color-fill-regular)
     }
   }
 }
-
-
