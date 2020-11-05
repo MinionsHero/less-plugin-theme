@@ -94,7 +94,7 @@ It will be compiled to
   color: #5073FF;
 }
 ```
-Then,you can control the global style by adding the desired attributes to your topmost element.
+Then, you can control the global style by adding the desired attributes to your topmost element.
 ```vue
 <!--Global Settings style-->
 <body class="white">
@@ -107,34 +107,39 @@ Then,you can control the global style by adding the desired attributes to your t
 </body>
 ```
 ## options
-If you use the plug-in constructor alone, allow the following parameters to be passed in
+If you use the plug-in constructor alone, allow the following parameters to be passed in:
 
-- themeIdentityKeyWord: type: 
-  The function name keyword to find in the value of the property to be replaced
-  type:string,required:false,default:'theme'
-- themePropertyValueHandler?: PropertyHandlerType
-  How to replace the attribute
-  type:function,required:false,
-  default:
-  ```js
-    function replace({key, value}) {
-                    return `each(${value}, {
-                                @class: replace(@key, '@', '');
-                                    .@{class} & {
-                                        ${key}: @value;
-                                    }
-                                });`}
-  ```
+| option                    | Description                                                  | Type                                              | Required | Default                |
+| ------------------------- | ------------------------------------------------------------ | ------------------------------------------------- | -------- | ---------------------- |
+| themeIdentityKeyWord      | The function name keyword to find in the value of the attribute to be replaced. | string                                            | false    | 'theme'                |
+| themePropertyValueHandler | How to replace the attribute                                 | function(option:{key:string;value:string}):string | False    | Refer to the following |
+
+Default value of themePropertyValueHandler:
+
+```js
+  function replace({key, value}) {
+    return `each(${value}, {
+							@class: replace(@key, '@', '');
+								.@{class} & {
+									${key}: @value;
+								}
+						});`
+  }
+```
 For example
+
 ```js
 import LessPluginTheme from 'less-plugin-theme'
 
 new LessPluginTheme({
     themeIdentityKeyWord: 'a',
-    themePropertyValueHandler: ''
+    themePropertyValueHandler: ({key,value})=>{return ...}
 })
 ```
+## Vue-cli config
+
 If you use it in vue-cli, just add it in the vue.config.js file
+
 ```js
 const LessThemePlugin = require('less-plugin-theme-easy')
 
