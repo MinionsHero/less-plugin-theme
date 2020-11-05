@@ -17,51 +17,40 @@ lessc file.less --theme-easy
 
 Try the following code
 ```less
-@color: red;
-@borderColor: {
-  xl: #dddddd;
-  xxl: #ffffff
-};
-.link {
-  font-size: 12px;
-  /**
-     The following statement will be transfer
-    .white .link,
-    .white.link {
-      color: #dddddd;
-    }
-    .black .link,
-    .black.link {
-      color: #ffffff;
-    }
-   */
-  color: theme({
-    white: #dddddd;
-    black: #ffffff;
-  });
-  /**
-     The following statement will be transfer
-    .xl .link,
-    .xl.link {
-      border-color: #dddddd;
-    }
-    .xxl .link,
-    .xxl.link {
-      border-color: #ffffff;
-    }
-   */
-  border-color: theme(@borderColor);
-  background-color: theme({
-    white: #dddddd;
-    black: #123456;
-  });
-  a {
-    .hello {
-      &.h {
-        .white &, .white& {
-          color: @color;
-        }
-      }
+@color-font-regular: {
+  white: #5D6588;
+  black: #CBD7F0;
+}
+
+@color-panel-item-active: {
+  white: #464e64;
+  black: #ffffff;
+}
+
+.item {
+  color: theme(@color-font-regular);
+
+  * {
+    font-size: 12px;
+    line-height: 30px;
+  }
+
+  &:hover, &.active {
+    color: theme(@color-panel-item-active);
+    background-color: theme({
+      white: #eef4ff;
+      black: #19233C;
+    });
+  }
+
+  .favorite-icon {
+    margin-right: 5px;
+
+    &.star {
+      color: theme({
+        white: #7E9EFD;
+        black: #5073FF;
+      });
     }
   }
 }
@@ -69,54 +58,96 @@ Try the following code
 It will be compiled to
 
 ```css
-.link {
+.white .item {
+  color: #5D6588;
+}
+.black .item {
+  color: #CBD7F0;
+}
+.item * {
   font-size: 12px;
+  line-height: 30px;
 }
-.white .link,
-.white.link {
-  color: #dddddd;
+.white .item:hover,
+.white .item.active {
+  color: #464e64;
 }
-.black .link,
-.black.link {
+.black .item:hover,
+.black .item.active {
   color: #ffffff;
 }
-.xl .link,
-.xl.link {
-  border-color: #dddddd;
+.white .item:hover,
+.white .item.active {
+  background-color: #eef4ff;
 }
-.xxl .link,
-.xxl.link {
-  border-color: #ffffff;
+.black .item:hover,
+.black .item.active {
+  background-color: #19233C;
 }
-.white .link,
-.white.link {
-  background-color: #dddddd;
+.item .favorite-icon {
+  margin-right: 5px;
 }
-.black .link,
-.black.link {
-  background-color: #123456;
+.white .item .favorite-icon.star {
+  color: #7E9EFD;
 }
-.white .link a .hello.h,
-.white.link a .hello.h {
-  color: red;
+.black .item .favorite-icon.star {
+  color: #5073FF;
 }
 ```
 Then,you can control the global style by adding the desired attributes to your topmost element.
 ```vue
 <!--Global Settings style-->
-<body class="white xl">
+<body class="white">
   <div>...</div>
-  <div class="link">
-      <a>
-        ...      
-      </a>
-  </div>
-  <!--Set styles separately-->
-  <div class="link black">
-      <a>
+  <div class="item">
+      <a class="favorite-icon">
         ...      
       </a>
   </div>
 </body>
 ```
+## options
+If you use the plug-in constructor alone, allow the following parameters to be passed in
 
+- themeIdentityKeyWord: type: 
+  The function name keyword to find in the value of the property to be replaced
+  type:string,required:false,default:'theme'
+- themePropertyValueHandler?: PropertyHandlerType
+  How to replace the attribute
+  type:function,required:false,
+  default:
+  ```js
+    function replace({key, value}) {
+                    return `each(${value}, {
+                                @class: replace(@key, '@', '');
+                                    .@{class} & {
+                                        ${key}: @value;
+                                    }
+                                });`}
+  ```
+For example
+```js
+import LessPluginTheme from 'less-plugin-theme'
+
+new LessPluginTheme({
+    themeIdentityKeyWord: 'a',
+    themePropertyValueHandler: ''
+})
+```
+If you use it in vue-cli, just add it in the vue.config.js file
+```js
+const LessThemePlugin = require('less-plugin-theme-easy')
+
+module.exports = {
+  // ...
+  css: {
+    loaderOptions: {
+      less: {
+        plugins: [
+          new LessThemePlugin(/** ...options */),
+        ],
+      }
+    }
+  }
+}
+```

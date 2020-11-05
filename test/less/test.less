@@ -1,12 +1,15 @@
-@import "./variables";
+@color-font-regular: {
+  white: #5D6588;
+  black: #CBD7F0;
+}
 
-.contract-item {
-  display: table-row;
-  vertical-align: middle;
+@color-panel-item-active: {
+  white: #464e64;
+  black: #ffffff;
+}
+
+.item {
   color: theme(@color-font-regular);
-  letter-spacing: 0;
-  cursor: pointer;
-  transition: background-color 0.2s;
 
   * {
     font-size: 12px;
@@ -15,37 +18,20 @@
 
   &:hover, &.active {
     color: theme(@color-panel-item-active);
-    background-color: theme(@color-panel-item-bg-active);
-  }
-
-  > * {
-    display: table-cell;
-
-    &:nth-child(1) {
-      padding-left: 16px;
-    }
-
-    &:nth-child(2) {
-      text-align: right;
-      padding: 0 0 0 15px;
-    }
-
-    &:nth-child(3) {
-      text-align: right;
-      padding: 0 31px 0 10px;
-    }
+    background-color: theme({
+      white: #eef4ff;
+      black: #19233C;
+    });
   }
 
   .favorite-icon {
-    font-size: inherit;
     margin-right: 5px;
 
-    &.hyicon-star {
-      color: theme(@color-btn-bg-active);
-    }
-
-    &.hyicon-star-not {
-      color: theme(@color-fill-regular);
+    &.star {
+      color: theme({
+        white: #7E9EFD;
+        black: #5073FF;
+      });
     }
   }
 }
