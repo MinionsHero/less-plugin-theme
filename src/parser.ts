@@ -30,7 +30,8 @@ export default class Parser {
                                 .@{class} & {
                                     ${key}: @value;
                                 }
-                            });`}
+                            });`
+            }
         this.throwLessError = (index, message) => {
             throw new Error(message)
         }
@@ -210,9 +211,8 @@ export default class Parser {
             }
         }
         if (state) {
-            if (state.valueOf() !== '') {
-                this.throwLessError(state.end, 'The less statement has an exception ending.')
-            }
+            addStatement(false)
+            tree.closeChildren()
         }
         if (leftBraceTimes > 0) {
             this.throwLessError(input.length - 1, 'Incomplete block of statements')
