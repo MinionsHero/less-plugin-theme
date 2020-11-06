@@ -155,17 +155,24 @@ export default class Parser {
                     addStatement(false)
                     tree.closeChildren()
                     break
-                case '\n':
                 case ';':
                     // 如果以回车或者;结尾，则整理键值对
                     if (isFindColon && leftBraceTimes === 0) {
-                        if (char === ';' && input.charAt(index + 1) === '\n') {
-                            break;
-                        }
-                        addProperty(char === '\n' ? 'property/enter' : 'property/colon')
+                        addProperty('property/colon')
                         break
                     }
                     takeAsState(index, char)
+                    break
+                case '\n':
+                    if (isFindColon && leftBraceTimes === 0) {
+                        const nextStr = input.slice(index + 1)
+                        if (nextStr.indexOf(';') > -1 || nextStr.indexOf('}') > 1) {
+                            takeAsState(index, char)
+                            break
+                        } else {
+                            this.throwLessError(index - 1, 'A semicolon is missing at the end of an attribute.')
+                        }
+                    }
                     break
                 case ':':
                     // 可能是选择器语句或者属性值后面的冒号

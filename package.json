@@ -1,6 +1,6 @@
 {
   "name": "less-plugin-theme-easy",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "easy to write theme code.",
   "author": "MinionsHero",
   "bugs": {
@@ -24,7 +24,7 @@
     "build": "rollup --config rollup.config.js",
     "dev": "rollup -w --config rollup.config.js",
     "serve": "node build/server.js",
-    "test": "lessc --plugin=./lib/index.js ./test/less/test.less"
+    "test": "npm run build && lessc --plugin=./lib/index.js ./test/less/test.less"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
