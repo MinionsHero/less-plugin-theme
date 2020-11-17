@@ -39,9 +39,9 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "test/**/*.less"
   ],
   "exclude": [
     "node_modules"
-  ],
+  ]
 }

@@ -1,13 +1,13 @@
 const webpack = require('webpack');
 const DevServer = require('webpack-dev-server');
-const webpackConfig = require('../webpack.config');
+const webpackConfig = require('./webpack.config');
 const path = require('path');
 const portfinder = require('portfinder');
 const open = require('open');
 const ip = require('ip')
 
-const publicPath = path.resolve(__dirname, '../demo/public');
-const distPath = path.resolve(__dirname, '../dist');
+const publicPath = path.resolve(__dirname, './public');
+const distPath = path.resolve(__dirname, './dist');
 const devConfig = {
     quiet: true, // 开启FriendlyErrorsPlugin必须设置这个为true
     contentBase: [

@@ -12,5 +12,4 @@ export default class LessPluginTheme {
         pluginManager.addPreProcessor(new parser(this.options));
     }
 
-
 }
