@@ -43,7 +43,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.less$/,
+                test: /\.(less|css)$/,
                 include: [
                     testPath,
                 ],

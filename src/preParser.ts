@@ -11,7 +11,7 @@ export interface OptionType {
     themePropertyValueHandler?: PropertyHandlerType
 }
 
-export default class Parser {
+export default class PreParser {
     private input: string = ''
     private context: any
     private imports: any
@@ -19,6 +19,7 @@ export default class Parser {
     private throwLessError: ThrowLessErrorFunc
     private readonly themeIdentityKeyWord: string
     private readonly themePropertyValueHandler: PropertyHandlerType
+    private readonly themeIdentityRegExp: RegExp
 
     constructor(options?: OptionType) {
         this.themeIdentityKeyWord = options && options.themeIdentityKeyWord || 'theme'
@@ -34,6 +35,7 @@ export default class Parser {
         this.throwLessError = (index, message) => {
             throw new Error(message)
         }
+        this.themeIdentityRegExp = new RegExp(this.themeIdentityKeyWord + '\\(((@\\S+)|(\\{([\\s\\S]*)\\}))\\)')
     }
 
     process(input: string, {context, imports, fileInfo}: { context: any, imports: any, fileInfo: string }) {
@@ -42,7 +44,11 @@ export default class Parser {
         this.context = context
         this.imports = imports
         this.fileInfo = fileInfo
-        return this.parse()
+        if (this.input.match(this.themeIdentityRegExp)) {
+            return this.parse()
+        } else {
+            return this.input
+        }
     }
 
     private parse() {
@@ -54,7 +60,7 @@ export default class Parser {
         let result = properties.reduce((output, el) => {
             output += input.slice(index, el.start)
             // 校验el.value是否符合格式规范
-            if (!/theme\(((@\S+)|(\{([\s\S]*)\}))\)/.test(el.value)) {
+            if (!this.themeIdentityRegExp.test(el.value)) {
                 this.throwLessError(el.start, `Invalid ${this.themeIdentityKeyWord} value.`)
             }
             let value = el.value.slice(`${this.themeIdentityKeyWord}(`.length, -1)

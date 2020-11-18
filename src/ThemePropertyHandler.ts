@@ -64,7 +64,8 @@ export default class ThemePropertyHandler {
                     sign = 1 // 开始查找
                 }
             } else if (sign === 1) {
-                if (/[a-z]/.test(c)) {
+                if (/([a-z]|-)/.test(c)) {
+                    debugger
                     sign = 2 // 找到了第一个a-z字符
                     property.start = themeProperty.element(i).i
                     arr.push(c)
@@ -115,7 +116,7 @@ export default class ThemePropertyHandler {
             } else if (sign === 6) {
                 if (!/\s/.test(c)) {
                     if (c === ';' || c === '}') {
-                        sign = 0
+                        sign = 1
                         result.push({...property})
                         property = {start: -1, name: '', value: '', end: -1}
                     } else {
