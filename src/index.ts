@@ -1,5 +1,4 @@
-import preParser, {OptionType} from './preParser'
-import postParser from "@/postParser";
+import PreParser, {OptionType} from './preParser'
 import PostParser from "@/postParser";
 
 
@@ -12,9 +11,10 @@ export default class LessPluginTheme {
     }
 
     install(less: any, pluginManager: any) {
-        pluginManager.addPreProcessor(new preParser(this.options));
+        const preParser = new PreParser(this.options)
+        pluginManager.addPreProcessor(preParser);
         if (!this.options || this.options.mergeSelector) {
-            pluginManager.addPostProcessor(new PostParser(), 1)
+            pluginManager.addPostProcessor(new PostParser(preParser), 1)
         }
     }
 

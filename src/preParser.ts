@@ -20,6 +20,7 @@ export default class PreParser {
     private readonly themeIdentityKeyWord: string
     private readonly themePropertyValueHandler: PropertyHandlerType
     private readonly themeIdentityRegExp: RegExp
+    handleType = 0
 
     constructor(options?: OptionType) {
         this.themeIdentityKeyWord = options && options.themeIdentityKeyWord || 'theme'
@@ -45,8 +46,11 @@ export default class PreParser {
         this.imports = imports
         this.fileInfo = fileInfo
         if (this.input.match(this.themeIdentityRegExp)) {
-            return this.parse()
+            let r = this.parse()
+            this.handleType = 1
+            return r
         } else {
+            this.handleType = 2
             return this.input
         }
     }

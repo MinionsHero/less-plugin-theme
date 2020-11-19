@@ -1,135 +1,92 @@
-import ErrorUtil from "@/utils";
-
-class Block {
-    selector: string
-    content: (Comment | string)[]
-
-    constructor(selector: string) {
-        this.selector = selector
-        this.content = []
-    }
-
-    pushContent(content: (Comment | string)) {
-        this.content.push(content)
-    }
-
-    concatContents(contents: (Comment | string)[]) {
-        this.content = this.content.concat(contents)
-    }
-
-}
-
-class Comment {
-    private content: string
-
-    constructor(content: string) {
-        this.content = content
-    }
-
-    toString() {
-        return this.content
-    }
-}
+import ErrorUtil, {ThrowLessErrorFunc} from "@/utils";
+import PreParser from "@/preParser";
+import {Statement, Block} from './CssTree'
 
 export default class PostParser {
 
-    process(input: string, {context, imports, fileInfo}: { context: any, imports: any, fileInfo: string }) {
-        let throwLessErrorFunc = ErrorUtil(fileInfo, input).throwLessError
+    private preParserGlobal: PreParser
+
+    constructor(p: PreParser) {
+        this.preParserGlobal = p
+    }
+
+    analysisCss(input: string, throwLessErrorFunc: ThrowLessErrorFunc) {
         let i = 0
-        let block: Block | null = null
-        let result: (Comment | Block)[] = []
-        let arr: string[] = []
+        let block: Block = new Block('')
+        let statement: Statement = new Statement()
         while (i < input.length) {
             const c = input.charAt(i)
             switch (c) {
                 case '{':
-                    let selector = arr.join('').trim()
+                    let selector = statement.valueOf()
                     if (selector) {
-                        block = new Block(selector)
-                        arr = []
+                        block.push(new Block(selector))
+                        statement.reset()
                     } else {
                         throwLessErrorFunc(i, 'Missing the selector before {.')
                     }
                     break
                 case '}':
-                    if (block) {
-                        let content = arr.join('').trim()
-                        if (content) {
-                            block.pushContent(content)
-                        }
-                        result.push(block)
-                        block = null
-                        arr = []
-                    } else {
-                        throwLessErrorFunc(i, 'Missing the selector before {.')
+                    let content = statement.valueOf()
+                    if (content) {
+                        block.push(content)
                     }
+                    statement.reset()
+                    block.close()
                     break
                 case '/':
                     if (input.charAt(i + 1) === '*') {
                         const commentEndIndex = this.findCommentEndIndex(input, i + 2)
                         if (commentEndIndex > -1) {
-                            let content = arr.join('').trim()
+                            let content = statement.valueOf()
                             if (content) {
-                                if (block) {
-                                    block.pushContent(content)
-                                    arr = []
-                                }
+                                block.push(content)
                             }
-                            const comment = new Comment(input.slice(i, commentEndIndex + 1))
-                            if (block) {
-                                block.pushContent(comment)
-                            } else {
-                                result.push(comment)
-                            }
+                            statement.reset()
+                            const comment = input.slice(i, commentEndIndex + 1)
+                            block.push(comment)
                             i = commentEndIndex + 1
+                            break
                         } else {
                             throwLessErrorFunc(i, 'Missing the closing comment.')
                         }
-                        break
                     }
-                    arr.push(c)
+                    statement.addChar(c)
                     break
+                case ';':
+                    statement.addChar(c)
+                    let content1 = statement.valueOf()
+                    if (content1) {
+                        block.push(content1)
+                    }
+                    statement.reset()
+                    break;
                 default:
-                    arr.push(c)
+                    statement.addChar(c)
                     break
             }
             i++
         }
-        if (arr.join('').trim()) {
-            throwLessErrorFunc(i - 1, 'Syntax error.')
+        let rest = statement.valueOf()
+        if (rest) {
+            block.push(rest)
+            statement.reset()
         }
-        return this.join(this.output(result))
+        return block
     }
 
-    output(result: (Comment | Block)[]) {
-        let arr: (Comment | Block)[] = []
-        result.forEach((el) => {
-            if (el instanceof Comment) {
-                arr.push(el)
-            } else {
-                let selector = el.selector
-                const index = arr.findIndex((item) => {
-                    return item instanceof Block && item.selector === selector
-                })
-                if (index > -1) {
-                    const block = arr[index] as Block
-                    block.concatContents(el.content)
-                } else {
-                    arr.push(el)
-                }
-            }
-        })
-        return arr
-    }
-
-    join(result: (Comment | Block)[]) {
-        return result.map(el => {
-            if (el instanceof Comment) {
-                return el.toString()
-            } else {
-                return `${el.selector} {\n  ${el.content.join('\n  ')}\n}`
-            }
-        }).join('\n')
+    process(input: string, {context, imports, fileInfo}: { context: any, imports: any, fileInfo: string }) {
+        if (this.preParserGlobal.handleType === 1) {
+            const throwLessError = ErrorUtil(fileInfo, input).throwLessError
+            const block = this.analysisCss(input, throwLessError)
+            const r = block.toString()
+            this.preParserGlobal.handleType = 0
+            return r
+        }
+        if (this.preParserGlobal.handleType === 1) {
+            this.preParserGlobal.handleType = 0
+        }
+        return input
     }
 
     findCommentEndIndex(input: string, index: number): number {
