@@ -1,0 +1,84 @@
+@page-content-margin-horizontal: 380px;
+@page-content-width: 1920px - @page-content-margin-horizontal * 2;
+.header-container {
+  top: 0;
+  left: 0;
+  z-index: 2;
+  transition: background-color 300ms;
+  position: absolute;
+  @keyframes up-frames {
+    from {
+      transform: translateY(0%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 1;
+    }
+  }
+  @keyframes down-frames {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+  }
+  &.up,
+  &.down {
+    position: fixed;
+    animation-duration: 300ms;
+    animation-timing-function: ease;
+    animation-direction: normal;
+    animation-play-state: running;
+    animation-fill-mode: both;
+  }
+  background-color: theme({light: transparent; dark: #ffffff;});
+  transform: theme({up: translateY(0%) ; down: translateY(-100%) ;});
+  animation-name: theme({up: up-frames; down: down-frames ;});
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  @top-padding-light: 27px;
+  @top-padding-dark: 12px;
+  .navigation .item {
+    padding-top: theme(
+            {light: @top-padding-light+20px;dark: @top-padding-dark+20px;}
+    );
+  }
+  .logo-container {
+    padding-top: theme({light: @top-padding-light;dark: @top-padding-dark});
+    .logo {
+      display: block;
+      width: theme({light: 130px;dark: 106px});
+      height: theme({light: 80px;dark: 65px});
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  }
+  .navigation {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .item {
+      color: theme({light: #ffffff; dark: #000000;});
+      &.active {
+        border-top: theme({light: 4px solid #ffffff; dark: 4px solid #c35b1c;});
+      }
+      .link {
+        font-size: 16px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+      & + .item {
+        margin-left: 80px;
+      }
+    }
+  }
+}

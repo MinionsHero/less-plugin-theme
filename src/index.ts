@@ -13,7 +13,7 @@ export default class LessPluginTheme {
     install(less: any, pluginManager: any) {
         const preParser = new PreParser(this.options)
         pluginManager.addPreProcessor(preParser);
-        if (!this.options || this.options.mergeSelector) {
+        if (!this.options || this.options.mergeSelector === undefined || this.options.mergeSelector) {
             pluginManager.addPostProcessor(new PostParser(preParser), 1)
         }
     }

@@ -36,7 +36,7 @@ export default class PreParser {
         this.throwLessError = (index, message) => {
             throw new Error(message)
         }
-        this.themeIdentityRegExp = new RegExp(this.themeIdentityKeyWord + '\\(((@\\S+)|(\\{([\\s\\S]*)\\}))\\)')
+        this.themeIdentityRegExp = new RegExp(this.themeIdentityKeyWord + '\\(((@\\S+)|(\\{\\S+\\}))\\)')
     }
 
     process(input: string, {context, imports, fileInfo}: { context: any, imports: any, fileInfo: string }) {
@@ -45,7 +45,7 @@ export default class PreParser {
         this.context = context
         this.imports = imports
         this.fileInfo = fileInfo
-        if (this.input.match(this.themeIdentityRegExp)) {
+        if (this.input.indexOf(this.themeIdentityKeyWord)>-1) {
             let r = this.parse()
             this.handleType = 1
             return r
@@ -64,10 +64,10 @@ export default class PreParser {
         let result = properties.reduce((output, el) => {
             output += input.slice(index, el.start)
             // 校验el.value是否符合格式规范
-            if (!this.themeIdentityRegExp.test(el.value)) {
+            if (!this.themeIdentityRegExp.test(el.value.replace(/\s/g,''))) {
                 this.throwLessError(el.start, `Invalid ${this.themeIdentityKeyWord} value.`)
             }
-            let value = el.value.slice(`${this.themeIdentityKeyWord}(`.length, -1)
+            let value = el.value.slice(el.value.indexOf('(')+1, el.value.lastIndexOf(')')).trim()
             output += this.themePropertyValueHandler({key: el.name, value: value})
             index = el.end + 1
             return output

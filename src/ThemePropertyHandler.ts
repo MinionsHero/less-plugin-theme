@@ -65,7 +65,6 @@ export default class ThemePropertyHandler {
                 }
             } else if (sign === 1) {
                 if (/([a-z]|-)/.test(c)) {
-                    debugger
                     sign = 2 // 找到了第一个a-z字符
                     property.start = themeProperty.element(i).i
                     arr.push(c)
@@ -85,7 +84,8 @@ export default class ThemePropertyHandler {
             } else if (sign === 3) {
                 if (!/\s/.test(c)) {
                     const sliceStart = input.slice(i)
-                    if (sliceStart.startsWith(keyWord + '(')) {
+                    // theme(或者 theme   (都是支持的
+                    if (sliceStart.startsWith(keyWord) && sliceStart.slice(keyWord.length).trim().startsWith('(')) {
                         sign = 4 // 找到了theme(
                         arr.push(c)
                     } else {
